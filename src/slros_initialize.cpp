@@ -12,6 +12,12 @@ SimulinkSubscriber<std_msgs::Float64, SL_Bus_profacc_std_msgs_Float64> Sub_profa
 // For Block profacc/Publish
 SimulinkPublisher<std_msgs::Float64, SL_Bus_profacc_std_msgs_Float64> Pub_profacc_9;
 
+// For Block profacc/Get Parameter
+SimulinkParameterGetter<real64_T, double> ParamGet_profacc_18;
+
+// For Block profacc/Get Parameter1
+SimulinkParameterGetter<real64_T, double> ParamGet_profacc_19;
+
 void slros_node_init(int argc, char** argv)
 {
   ros::init(argc, argv, SLROSNodeName);

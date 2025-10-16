@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'profacc'.
 //
-// Model version                  : 1.9
+// Model version                  : 1.23
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Tue Oct 14 10:10:23 2025
+// C/C++ source code generated on : Wed Oct 15 21:52:00 2025
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Generic->Unspecified (assume 32-bit Generic)

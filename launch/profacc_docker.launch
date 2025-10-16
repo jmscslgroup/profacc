@@ -8,7 +8,7 @@
   <arg name="bagfileout" default="/ros/catkin_ws/profacc"/>
 
   <!-- sets the initial position of the lead car. -->
-  <param name="/leadcar/x0" type="double" value="40.0" />
+  <param name="/leadcar/x0" type="double" value="80.0" />
 
   <!-- sets the initial velocity of the ego car. -->
   <param name="/egocar/v0" type="double" value="10.0" />
@@ -26,6 +26,7 @@
   <group ns="leadcar">
 	<node pkg="odometer" type="odometer" name="odometer_leadcar">
 	    <remap from="vel_x" to="car/state/vel_x" />
+	    <remap from="odom" to="odom_x"/>
 	</node>
   </group>
 
@@ -46,7 +47,7 @@
   </node>
 
   <node pkg="subtractor" type="subtractor" name="subtractor_odom">
-    <remap from="in1" to="/leadcar/odom" />
+	<remap from="in1" to="/leadcar/odom_x" />
 	<remap from="in2" to="/egocar/odom_x" />
 	<remap from="diff" to="/egocar/lead_dist" />
   </node>

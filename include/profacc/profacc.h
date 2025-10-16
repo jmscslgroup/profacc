@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'profacc'.
 //
-// Model version                  : 1.9
+// Model version                  : 1.23
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Tue Oct 14 10:10:23 2025
+// C/C++ source code generated on : Wed Oct 15 21:52:00 2025
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Generic->Unspecified (assume 32-bit Generic)
@@ -25,15 +25,17 @@
 
 // Block signals (default storage)
 struct B_profacc_T {
-  SL_Bus_profacc_std_msgs_Float64 In1; // '<S8>/In1'
-  SL_Bus_profacc_std_msgs_Float64 In1_m;// '<S7>/In1'
+  SL_Bus_profacc_std_msgs_Float64 In1; // '<S7>/In1'
+  SL_Bus_profacc_std_msgs_Float64 In1_m;// '<S6>/In1'
 };
 
 // Block states (default storage) for system '<Root>'
 struct DW_profacc_T {
-  ros_slroscpp_internal_block_P_T obj; // '<S3>/SinkBlock'
-  ros_slroscpp_internal_block_S_T obj_g;// '<S5>/SourceBlock'
-  ros_slroscpp_internal_block_S_T obj_n;// '<S4>/SourceBlock'
+  ros_slros_internal_block_GetP_T obj; // '<Root>/Get Parameter1'
+  ros_slros_internal_block_GetP_T obj_e;// '<Root>/Get Parameter'
+  ros_slroscpp_internal_block_P_T obj_n;// '<S2>/SinkBlock'
+  ros_slroscpp_internal_block_S_T obj_g;// '<S4>/SourceBlock'
+  ros_slroscpp_internal_block_S_T obj_nf;// '<S3>/SourceBlock'
 };
 
 // Real-time Model Data Structure
@@ -115,13 +117,13 @@ extern volatile boolean_T runModel;
 //
 //  '<Root>' : 'profacc'
 //  '<S1>'   : 'profacc/Blank Message'
-//  '<S2>'   : 'profacc/MyController'
-//  '<S3>'   : 'profacc/Publish'
-//  '<S4>'   : 'profacc/Subscribe'
-//  '<S5>'   : 'profacc/Subscribe1'
-//  '<S6>'   : 'profacc/MyController/MATLAB Function1'
-//  '<S7>'   : 'profacc/Subscribe/Enabled Subsystem'
-//  '<S8>'   : 'profacc/Subscribe1/Enabled Subsystem'
+//  '<S2>'   : 'profacc/Publish'
+//  '<S3>'   : 'profacc/Subscribe'
+//  '<S4>'   : 'profacc/Subscribe1'
+//  '<S5>'   : 'profacc/myController'
+//  '<S6>'   : 'profacc/Subscribe/Enabled Subsystem'
+//  '<S7>'   : 'profacc/Subscribe1/Enabled Subsystem'
+//  '<S8>'   : 'profacc/myController/MATLAB Function'
 
 #endif                                 // profacc_h_
 
