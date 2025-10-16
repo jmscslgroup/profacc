@@ -32,25 +32,28 @@
 
   <!-- By putting this car into a namespace, we keep the variables clean -->
   <group ns="egocar">
+  	<arg name="leader" default="leadcar"/>
+	<arg name="myname" default="egocar"/>
 	  <node pkg="carsimplesimulink" type="carsimplesimulink" name="carsimplesimulink_node">
 	      <remap from="vel_x" to="car/state/vel_x" />
 	  </node>
 	  <node pkg="profacc" type="profacc" name="profacc_node" />
+	  
+	  <!-- add in the forward-facing radar here -->
+	  <node pkg="subtractor" type="subtractor" name="subtractor_relvel">
+		<remap from="in1" to="/$(arg leader)/car/state/vel_x" />
+		<remap from="in2" to="/$(arg myname)/car/state/vel_x" />
+		<remap from="diff" to="/$(arg myname)/rel_vel" />
+	  </node>
+
+	  <node pkg="subtractor" type="subtractor" name="subtractor_odom">
+		<remap from="in1" to="/$(arg leader)/odom_x" />
+		<remap from="in2" to="/$(arg myname)/odom_x" />
+		<remap from="diff" to="/$(arg myname)/lead_dist" />
+	  </node>
   </group>
 
 
-
-  <node pkg="subtractor" type="subtractor" name="subtractor_relvel">
-    <remap from="in1" to="/leadcar/car/state/vel_x" />
-	<remap from="in2" to="/egocar/car/state/vel_x" />
-	<remap from="diff" to="/egocar/rel_vel" />
-  </node>
-
-  <node pkg="subtractor" type="subtractor" name="subtractor_odom">
-	<remap from="in1" to="/leadcar/odom_x" />
-	<remap from="in2" to="/egocar/odom_x" />
-	<remap from="diff" to="/egocar/lead_dist" />
-  </node>
 
   
   <!-- change the output directory if this is not where yours is mapped -->
