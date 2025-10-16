@@ -28,5 +28,5 @@
   #define PROFACC_PUBLIC_TYPE
 #endif
 #endif  // PROFACC__VISIBILITY_CONTROL_H_
-// Generated 15-Oct-2025 21:52:29
+// Generated 16-Oct-2025 09:51:47
 // Copyright 2019-2020 The MathWorks, Inc.

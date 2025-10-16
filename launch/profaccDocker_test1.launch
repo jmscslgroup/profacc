@@ -5,18 +5,18 @@
 	use a namespace for the node in which we are running. -->
 
   <!-- change the output directory and prefix if this is not where yours is mapped -->
-  <arg name="bagfileout" default="/ros/catkin_ws/profacc"/>
+  <arg name="bagfileout" default="/ros/catkin_ws/profacc_test1"/>
 
   <!-- sets the initial position of the lead car. -->
   <param name="/leadcar/x0" type="double" value="20.0" />
 
   <!-- sets the initial velocity of the ego car. -->
-  <param name="/egocar/v0" type="double" value="1.0" />
+  <param name="/egocar/v0" type="double" value="2.5123" />
   <!-- sets the initial position of the ego car. -->
-  <param name="/egocar/x0" type="double" value="0.0" />
+  <param name="/egocar/x0" type="double" value="15.0" />
 
   <!-- change the start time if needed -->
-  <node pkg="rosbag" type="play" name="rosbag_player" args="/ros/catkin_ws/mytest.bag --topics /car/state/vel_x -s 100">
+  <node pkg="rosbag" type="play" name="rosbag_player" args="/ros/catkin_ws/mytest.bag --topics /car/state/vel_x -s 116">
     <!-- remap the output to go into the desired car -->
 	<remap from="/car/state/vel_x" to="/leadcar/car/state/vel_x" />
   </node>
