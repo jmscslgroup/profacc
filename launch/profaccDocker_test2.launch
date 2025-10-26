@@ -1,0 +1,76 @@
+<launch>
+
+  <!-- In this launchfile, we demonstrate how to set some initial variables as parameters,
+  	how to record the output file to a place that is persistent, and how to 
+	use a namespace for the node in which we are running. -->
+
+  <!-- change the output directory and prefix if this is not where yours is mapped -->
+  <arg name="bagfileout" default="/ros/catkin_ws/profacc_complex_test2"/>
+
+  <!-- sets the initial position of the lead car. -->
+  <param name="/leadcar/x0" type="double" value="20.0" />
+
+  <!-- sets the initial velocity of the ego car. -->
+  <param name="/egocar/v0" type="double" value="1.0" />
+  <!-- sets the initial position of the ego car. -->
+  <param name="/egocar/x0" type="double" value="0.0" />
+
+  <!-- change the start time if needed -->
+  <node pkg="rosbag" type="play" name="rosbag_player" args="/ros/catkin_ws/mytest.bag --topics /car/state/vel_x -s 100">
+    <!-- remap the output to go into the desired car -->
+	<remap from="/car/state/vel_x" to="/leadcar/car/state/vel_x" />
+  </node>
+  
+  
+  <!-- By putting this car into a namespace, we keep the variables clean -->
+  <group ns="leadcar">
+	<node pkg="odometer" type="odometer" name="odometer_leadcar">
+	    <remap from="vel_x" to="car/state/vel_x" />
+	    <remap from="odom" to="odom_x"/>
+	</node>
+  </group>
+
+  <!-- By putting this car into a namespace, we keep the variables clean -->
+  <group ns="egocar">
+  	<arg name="leader" default="leadcar"/>
+	<arg name="myname" default="egocar"/>
+	  <node pkg="carcomplexsimulink" type="carcomplexsimulink" name="carcomplexsimulink_node">
+	      <remap from="vel_x" to="car/state/vel_x" />
+	  </node>
+	  <node pkg="profacc" type="profacc" name="profacc_node">
+          <remap from="lead_dist" to="lead_dist_extra"/>
+      </node>
+	  
+	  <!-- add in the forward-facing radar here -->
+	  <node pkg="subtractor" type="subtractor" name="subtractor_relvel">
+		<remap from="in1" to="/$(arg leader)/car/state/vel_x" />
+		<remap from="in2" to="/$(arg myname)/car/state/vel_x" />
+		<remap from="diff" to="/$(arg myname)/rel_vel" />
+	  </node>
+
+	  <node pkg="subtractor" type="subtractor" name="subtractor_odom">
+		<remap from="in1" to="/$(arg leader)/odom_x" />
+		<remap from="in2" to="/$(arg myname)/odom_x" />
+		<remap from="diff" to="/$(arg myname)/lead_dist" />
+	  </node>
+      
+      <!-- We want an offset of (say) 10m for lead_dist -->
+      <arg name="offset_rate" default="10.0"/>
+      <arg name="offset_value" default="10.0"/>
+      <node pkg="rostopic" type="rostopic" name="rostopic_offset" args="pub lead_dist_offset -r $(arg offset_rate) std_msgs/Float64 'data: $(arg offset_value)'"/>
+      
+      <!-- Fake the extra space for lead_dist -->
+      <node pkg="subtractor" type="subtractor" name="subtractor_extra_space">
+		<remap from="in1" to="/$(arg myname)/lead_dist" />
+		<remap from="in2" to="/$(arg myname)/lead_dist_offset" />
+		<remap from="diff" to="/$(arg myname)/lead_dist_extra" />
+	  </node>
+  </group>
+
+
+
+  
+  <!-- change the output directory if this is not where yours is mapped -->
+  <node pkg="rosbag" type="record" name="rosbag_recorder" args="-a -o $(arg bagfileout)" />
+  
+</launch>

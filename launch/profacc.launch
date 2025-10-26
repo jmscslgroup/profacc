@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <!-- ~~~~ Your team may add params but should not change any of the remaps below ~~~ -->
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <!-- your description likely should not change, but if it needs to , check it here -->
+    <arg name="description" default="profacc_test"/>
+    <!-- Your package name should not change, but you may want to add params inside -->
+    <node pkg="profacc" type="profacc" name="profacc" output="screen">
+        <!-- if you have parameters for your node, set them here  -->
+
+        <!-- DO NOT change this remap; this is a hardware-only configuration -->
+        <remap from="cmd_accel" to="cmd_accel_pre"/>
+        <!-- DO NOT change this remap; this gives an additional safety buffer -->
+        <remap from="lead_dist" to="lead_dist_extra"/>
+        <!-- DO NOT change this remap; this fixes the sign change for rel_vel -->
+        <remap from="rel_vel" to="rel_vel_reversed"/>
+    </node>
+
+
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~          Teams may not update below this line         ~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <!-- ~~~~~ Pretend we are 10m closer to the car in front than we actually are,
+	           in order to avoid using the CBF the whole time ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- We want an offset of (say) 10m for lead_dist -->
+    <arg name="offset_rate" default="10.0"/>
+    <arg name="offset_value" default="10.0"/>
+    <node pkg="rostopic" type="rostopic" name="rostopic_offset" 
+        args="pub lead_dist_offset -r $(arg offset_rate) std_msgs/Float64 'data: $(arg offset_value)'"/>
+    
+    <!-- Fake the extra space for lead_dist -->
+    <node pkg="subtractor" type="subtractor" name="subtractor_extra_space">
+        <remap from="in1" to="lead_dist" />
+        <remap from="in2" to="lead_dist_offset" />
+        <remap from="diff" to="lead_dist_extra" />
+    </node>
+
+    <!-- ~~~~~ Guess what? Our car uses the wrong sign for rel_vel...so we fix it for you ~~ -->
+    <!-- We use the same offset rate as before -->
+    <arg name="offset_rate" default="10.0"/>
+    <node pkg="rostopic" type="rostopic" name="rostopic_sign" 
+        args="pub zero_float -r $(arg offset_rate) std_msgs/Float64 'data: 0.0'"/>
+    
+    <!-- Add extra space for lead_dist by ...subtracting something from the lead value ~~~~~ -->
+    <node pkg="subtractor" type="subtractor" name="subtractor_rel_vel_reversed">
+        <remap from="in1" to="zero_float" />
+        <remap from="in2" to="rel_vel" />
+        <remap from="diff" to="rel_vel_reversed" />
+    </node>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~  Safety and supervisory control parameters of the Control Barrier Function ~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <!-- CBF params -->
+    <arg name="margin" default="30.0"/>
+    <arg name="use_margin" default="false"/>
+    <arg name="hwil" default="true"/>
+    <arg name="readonly" default="false"/>
+    <arg name="vsl_hwil_test" default="false"/>
+    <!-- CBF node -->
+    <node pkg="cbf" type="cbf" name="cbf" if="$(eval not readonly and hwil)">
+    </node>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~ Magic commands that make the car connect to the correct interface ~~~~~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- CAN_to_ROS launches, for vehicle interface, subs, rosbag record and safety_checks(?) -->
+    <node pkg="can_to_ros" type="vehicle_interface" name="vehicle_interface" output="screen" respawn="true" respawn_delay="2" />
+    <node pkg="can_to_ros" type ="subs" name="subs" output="screen" if="$(arg hwil)">
+    </node>
+    <include file="$(find can_to_ros)launch/safety_checks.launch" />
+  
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~          Rosbag recording parameters from above       ~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    
+    <!-- recording the ros bag -->
+    <node pkg="can_to_ros" type ="rosbag_record.sh" name="bashscript2" output="screen" args="$(arg description) $(arg hwil)" />
+
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+
+</launch>
