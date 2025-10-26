@@ -17,4 +17,6 @@ apps:
         - owner: jmscslgroup
           repo: setpointreader
         - owner: jmscslgroup
+          repo: subtractor
+        - owner: jmscslgroup
           repo: profacc
