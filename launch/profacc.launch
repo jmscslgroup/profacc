@@ -10,7 +10,9 @@
     <!-- Your package name should not change, but you may want to add params inside -->
     <node pkg="profacc" type="profacc" name="profacc" output="screen">
         <!-- if you have parameters for your node, set them here  -->
-
+        <param name="alpha" type="double" value="1.1" />
+        <param name="tau" type="double" value="2" />
+        <param name="lambda" type="double" value="0.1" />
         <!-- DO NOT change this remap; this is a hardware-only configuration -->
         <remap from="cmd_accel" to="cmd_accel_pre"/>
         <!-- DO NOT change this remap; this gives an additional safety buffer -->
