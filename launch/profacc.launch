@@ -44,7 +44,6 @@
 
     <!-- ~~~~~ Guess what? Our car uses the wrong sign for rel_vel...so we fix it for you ~~ -->
     <!-- We use the same offset rate as before -->
-    <arg name="offset_rate" default="10.0"/>
     <node pkg="rostopic" type="rostopic" name="rostopic_sign" 
         args="pub zero_float -r $(arg offset_rate) std_msgs/Float64 'data: 0.0'"/>
     
