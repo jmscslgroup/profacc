@@ -20,3 +20,4 @@ apps:
           repo: subtractor
         - owner: jmscslgroup
           repo: profacc
+          branch_or_hash: relvel
