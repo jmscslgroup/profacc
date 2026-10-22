@@ -25,11 +25,11 @@
     <!-- ~~~~          Teams may not update below this line         ~~~~~~~~~~~~~~~~~~~~ -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-    <!-- buffer for the speed limit -->
-    <param name="buffer" type="double" value="1.0" />
-
     <!-- ~~~~~ Set a speed limit for the car from the ACC set speed in m/s~~~~~~~~~~~~~~ -->
     <node pkg="speedlimiter" type="speedlimiter" name="speedlimiter">
+        <!-- buffer for the speed limit -->
+        <param name="buffer" type="double" value="1.0" />
+
         <!-- take the output from the controller and feed it into the speed limiter -->
         <remap from="cmd_accel_pre" to="cmd_accel_speedlimit_pre"/>
     </node>
