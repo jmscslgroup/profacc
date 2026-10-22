@@ -3,9 +3,9 @@
 //
 // Code generated for Simulink model 'profacc'.
 //
-// Model version                  : 1.25
+// Model version                  : 1.33
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Oct 16 09:51:47 2025
+// C/C++ source code generated on : Mon Oct 27 20:51:05 2025
 //
 
 #include <stdio.h>

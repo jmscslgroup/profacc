@@ -9,6 +9,9 @@ SimulinkSubscriber<std_msgs::Float64, SL_Bus_profacc_std_msgs_Float64> Sub_profa
 // For Block profacc/Subscribe1
 SimulinkSubscriber<std_msgs::Float64, SL_Bus_profacc_std_msgs_Float64> Sub_profacc_2;
 
+// For Block profacc/Subscribe2
+SimulinkSubscriber<std_msgs::Float64, SL_Bus_profacc_std_msgs_Float64> Sub_profacc_48;
+
 // For Block profacc/Publish
 SimulinkPublisher<std_msgs::Float64, SL_Bus_profacc_std_msgs_Float64> Pub_profacc_9;
 
@@ -17,6 +20,9 @@ SimulinkParameterGetter<real64_T, double> ParamGet_profacc_18;
 
 // For Block profacc/Get Parameter1
 SimulinkParameterGetter<real64_T, double> ParamGet_profacc_19;
+
+// For Block profacc/Get Parameter2
+SimulinkParameterGetter<real64_T, double> ParamGet_profacc_52;
 
 void slros_node_init(int argc, char** argv)
 {
