@@ -16,7 +16,7 @@
   <param name="/egocar/x0" type="double" value="0.0" />
 
   <!-- change the start time if needed -->
-  <node pkg="rosbag" type="play" name="rosbag_player" args="/ros/catkin_ws/mytest.bag --topics /car/state/vel_x -s 100">
+  <node pkg="rosbag" type="play" name="rosbag_player" args="/ros/catkin_ws/2025_10_29_20_50_04_2T3MWRFVXLW056972profacc_test.bag --topics /car/state/vel_x -s 318">
     <!-- remap the output to go into the desired car -->
 	<remap from="/car/state/vel_x" to="/leadcar/car/state/vel_x" />
   </node>

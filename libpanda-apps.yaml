@@ -13,6 +13,8 @@ apps:
           repo: cbf
           branch_or_hash: original_CBF_implementation_2021
         - owner: jmscslgroup
+          repo: speedlimiter
+        - owner: jmscslgroup
           repo: velocity_controller
         - owner: jmscslgroup
           repo: setpointreader
