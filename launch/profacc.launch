@@ -32,6 +32,7 @@
 
         <!-- take the output from the controller and feed it into the speed limiter -->
         <remap from="cmd_accel_pre" to="cmd_accel_speedlimit_pre"/>
+        <remap from="cmd_accel_limited" to="cmd_accel_pre"/>
     </node>
 
 
