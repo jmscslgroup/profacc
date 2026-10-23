@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "=========================="
-echo "Installing App profacc"
+echo "Installing App profaccradar"
 
 # Here is where we perform installation of scripts, services, etc.
 echo " - Installing ROS packages for profaccradar..."
@@ -28,10 +28,10 @@ echo "Installing profaccradar..."
 pushd /home/$LIBPANDA_USER/catkin_ws
 runuser -l $LIBPANDA_USER -c 'source /opt/ros/noetic/setup.bash && cd catkin_ws && catkin_make'
 source devel/setup.sh
-rosrun robot_upstart install profacc/launch/${LAUNCH_FILE} --user root
+rosrun robot_upstart install profacc/launch/${LAUNCH_FILE} --job profaccradar --user root
 
 echo "Enabling can_to_ros startup script"
 sudo systemctl daemon-reload
-sudo systemctl enable profacc
+sudo systemctl enable profaccradar
 popd
 echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"

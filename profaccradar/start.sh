@@ -1,8 +1,8 @@
 #!/bin/bash
 
 echo "=========================="
-echo "Starting App profaccradar for profacc"
+echo "Starting App profaccradar"
 
 
-systemctl start profacc
+systemctl start profaccradar
 systemctl start rosnodeChecker

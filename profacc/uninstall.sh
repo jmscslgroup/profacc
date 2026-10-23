@@ -12,13 +12,13 @@ systemctl disable profacc
 
 
 # Here is where we remove scripts, services, etc.
+# Always uninstall the robot_upstart job: it is not listed by systemctl
+# once stopped, and a leftover /etc/ros/noetic/profacc.d/*.launch would be
+# started next to the next app's launch file.
 echo " - Removing scripts..."
 cd
-if [ "x"`systemctl list-units | grep -c profacc.service` = "x1" ]; then
-    echo "Uninstalling profacc.service"
-
-    source /home/$LIBPANDA_USER/catkin_ws/devel/setup.bash
-    rosrun robot_upstart uninstall profacc
-fi
+echo "Uninstalling profacc.service"
+source /home/$LIBPANDA_USER/catkin_ws/devel/setup.bash
+rosrun robot_upstart uninstall profacc
 
 systemctl daemon-reload # if needed

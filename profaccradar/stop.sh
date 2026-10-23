@@ -4,4 +4,4 @@ echo "=========================="
 echo "Stopping App profaccradar"
 
 systemctl stop rosnodeChecker
-systemctl stop profacc
+systemctl stop profaccradar
