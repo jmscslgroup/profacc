@@ -1,0 +1,1 @@
+Time-headway ACC control, using the radar-based lead distance estimate (gps2vsl leadVelProcessing.py) above 10 m and lead_dist otherwise.

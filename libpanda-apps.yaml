@@ -22,3 +22,30 @@ apps:
           repo: subtractor
         - owner: jmscslgroup
           repo: profacc
+  - name: profaccradar
+    properties:
+      - owns_panda: true
+    dependencies:
+      - apt: python3-pandas
+      - apt: python3-requests
+      - pip3: cantools
+      - pip3: shapely
+    ros_repositories:
+        - owner: jmscslgroup
+          repo: can_to_ros
+        - owner: jmscslgroup
+          repo: cbf
+          branch_or_hash: original_CBF_implementation_2021
+        - owner: jmscslgroup
+          repo: speedlimiter
+        - owner: jmscslgroup
+          repo: velocity_controller
+        - owner: jmscslgroup
+          repo: setpointreader
+        - owner: jmscslgroup
+          repo: subtractor
+        - owner: MatthewNice
+          repo: gps2vsl
+          branch_or_hash: e1d91077baadccbdcf1e75a875030aeb4e980061
+        - owner: jmscslgroup
+          repo: profacc

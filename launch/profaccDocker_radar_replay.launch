@@ -1,0 +1,45 @@
+<launch>
+
+  <!-- Replay a bag recorded on the car through the radar lead-distance
+       estimator (gps2vsl leadVelProcessing.py), in shadow mode: no
+       controller runs, so nothing here closes the loop.
+
+       Run from rossim/:
+         ./scripts/run.sh profaccDocker_radar_replay.launch
+         ./scripts/run.sh profaccDocker_radar_replay.launch bag:=/ros/catkin_ws/other.bag
+
+       The output bag (bagfileout_<date>.bag) holds the replayed inputs plus
+       /radar_dist_estimate and /radar_rv_estimate, stamped with the original
+       bag's times. Needs gps2vsl cloned into rossim/src. -->
+
+  <!-- change the input bag and output prefix if needed -->
+  <arg name="bag" default="/ros/catkin_ws/2026_10_22_22_38_14_2T3MWRFVXLW056972profacc.bag"/>
+  <arg name="bagfileout" default="/ros/catkin_ws/radar_replay"/>
+  <!-- seconds into the input bag to start from -->
+  <arg name="start" default="0"/>
+
+  <!-- everyone uses the bag's clock, so the output lines up with the input -->
+  <param name="use_sim_time" value="true"/>
+
+  <!-- replay only what the estimator reads, at real-time speed: the estimator
+       keeps radar points for 0.1 s of wall-clock time, so a faster replay
+       would average over more points than it does on the car.
+       When the bag ends, required="true" shuts everything down. -->
+  <node pkg="rosbag" type="play" name="rosbag_player" required="true"
+        args="--clock -s $(arg start) $(arg bag) --topics
+              /lead_dist /rel_vel /car/state/vel_x
+              /car/radar/track_a0 /car/radar/track_a1 /car/radar/track_a2 /car/radar/track_a3
+              /car/radar/track_a4 /car/radar/track_a5 /car/radar/track_a6 /car/radar/track_a7
+              /car/radar/track_a8 /car/radar/track_a9 /car/radar/track_a10 /car/radar/track_a11
+              /car/radar/track_a12 /car/radar/track_a13 /car/radar/track_a14 /car/radar/track_a15"/>
+
+  <!-- the estimator, unchanged from the car; it prints a line per radar
+       point, so its output goes to the log instead of the screen -->
+  <node pkg="gps2vsl" type="leadVelProcessing.py" name="leadVelProcessing" output="log"
+        launch-prefix="python3 $(find profacc)/scripts/run_py3_stubbed.py"/>
+
+  <!-- record the estimates next to the signals they are compared with -->
+  <node pkg="rosbag" type="record" name="rosbag_recorder"
+        args="-o $(arg bagfileout) /lead_dist /rel_vel /car/state/vel_x /radar_dist_estimate /radar_rv_estimate"/>
+
+</launch>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <!-- ~~~~ Your team may add params but should not change any of the remaps below ~~~ -->
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <!-- your description likely should not change, but if it needs to , check it here -->
+    <arg name="description" default="profaccradar"/>
+    <!-- Your package name should not change, but you may want to add params inside -->
+    <node pkg="profacc" type="profacc" name="profacc" output="screen">
+        <!-- if you have parameters for your node, set them here  -->
+        <param name="alpha" type="double" value="1.1" />
+        <param name="tau" type="double" value="2" />
+        <param name="lambda" type="double" value="0.1" />
+        <!-- DO NOT change this remap; this is a hardware-only configuration -->
+        <remap from="cmd_accel" to="cmd_accel_speedlimit_pre"/>
+        <!-- DO NOT change this remap; this gives an additional safety buffer -->
+        <remap from="lead_dist" to="lead_dist_extra"/>
+    </node>
+
+
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~          Teams may not update below this line         ~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <!-- ~~~~~ Set a speed limit for the car from the ACC set speed in m/s~~~~~~~~~~~~~~ -->
+    <node pkg="speedlimiter" type="speedlimiter" name="speedlimiter">
+        <!-- buffer for the speed limit -->
+        <param name="buffer" type="double" value="1.0" />
+
+        <!-- take the output from the controller and feed it into the speed limiter -->
+        <remap from="cmd_accel_pre" to="cmd_accel_speedlimit_pre"/>
+        <remap from="cmd_accel_limited" to="cmd_accel_pre"/>
+    </node>
+
+
+    <!-- ~~~~~ Pretend we are 20m closer to the car in front than we actually are,
+	           in order to avoid using the CBF the whole time ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- We want an offset of (say) 10m for lead_dist -->
+    <arg name="offset_rate" default="10.0"/>
+    <arg name="offset_value" default="20.0"/>
+    <node pkg="rostopic" type="rostopic" name="rostopic_offset" 
+        args="pub lead_dist_offset -r $(arg offset_rate) std_msgs/Float64 'data: $(arg offset_value)'"/>
+    
+    <!-- ~~~~~ Radar-based space gap: estimate the lead distance from the radar
+               tracks, then choose between it and lead_dist ~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- publishes /radar_dist_estimate (300 = no match) and /radar_rv_estimate;
+         it prints a line per radar point, so its output goes to the log -->
+    <node pkg="gps2vsl" type="leadVelProcessing.py" name="leadVelProcessing" output="log" />
+    <!-- lead_dist_radar = radar estimate when it is valid, fresh, and the lead is
+         at least min_radar_dist away; lead_dist otherwise -->
+    <node pkg="profacc" type="radar_gap_select.py" name="radar_gap_select" output="screen">
+        <param name="min_radar_dist" type="double" value="10.0" />
+        <param name="max_age" type="double" value="0.25" />
+    </node>
+
+    <!-- Fake the extra space for the chosen gap -->
+    <node pkg="subtractor" type="subtractor" name="subtractor_extra_space">
+        <remap from="in1" to="lead_dist_radar" />
+        <remap from="in2" to="lead_dist_offset" />
+        <remap from="diff" to="lead_dist_extra" />
+    </node>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~  Safety and supervisory control parameters of the Control Barrier Function ~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <!-- CBF params -->
+    <arg name="margin" default="30.0"/>
+    <arg name="use_margin" default="false"/>
+    <arg name="hwil" default="true"/>
+    <arg name="readonly" default="false"/>
+    <arg name="vsl_hwil_test" default="false"/>
+    <!-- CBF node -->
+    <node pkg="cbf" type="cbf" name="cbf" if="$(eval not readonly and hwil)">
+    </node>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~ Magic commands that make the car connect to the correct interface ~~~~~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- CAN_to_ROS launches, for vehicle interface, subs, rosbag record and safety_checks(?) -->
+    <node pkg="can_to_ros" type="vehicle_interface" name="vehicle_interface" output="screen" respawn="true" respawn_delay="2" />
+    <node pkg="can_to_ros" type ="subs" name="subs" output="screen" if="$(arg hwil)">
+    </node>
+    <include file="$(find can_to_ros)launch/safety_checks.launch" />
+  
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~          Rosbag recording parameters from above       ~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    
+    <!-- recording the ros bag -->
+    <node pkg="can_to_ros" type ="rosbag_record.sh" name="bashscript2" output="screen" args="$(arg description) $(arg hwil)" />
+
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+
+</launch>
