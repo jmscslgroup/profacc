@@ -73,9 +73,20 @@
     <arg name="hwil" default="true"/>
     <arg name="readonly" default="false"/>
     <arg name="vsl_hwil_test" default="false"/>
-    <!-- CBF node -->
+    <!-- old CBF node
     <node pkg="cbf" type="cbf" name="cbf" if="$(eval not readonly and hwil)">
     </node>
+    -->
+    
+    
+    <node pkg="multimodalcbf" type="multimodalcbf" name="multimodalcbf" if="$(eval not readonly and hwil)">
+        <!-- DO NOT change this remap; this fixes the sign change for rel_vel -->
+        <!-- <remap from="rel_vel" to="rel_vel_reversed"/> -->
+        <param name="creep_velocity_limit" type="double" value="0.1" />
+        <param name="creep_acceleration_limit" type="double" value="0.05" />
+    </node>
+    
+    
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- ~~~~~~ Magic commands that make the car connect to the correct interface ~~~~~~ -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
