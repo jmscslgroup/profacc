@@ -79,11 +79,11 @@
     -->
     
     
-    <node pkg="multimodalcbf" type="multimodalcbf" name="multimodalcbf" if="$(eval not readonly and hwil)">
+    <node pkg="multimodecbf" type="multimodecbf" name="multimodecbf" if="$(eval not readonly and hwil)">
         <!-- DO NOT change this remap; this fixes the sign change for rel_vel -->
         <!-- <remap from="rel_vel" to="rel_vel_reversed"/> -->
         <param name="creep_velocity_limit" type="double" value="0.1" />
-        <param name="creep_acceleration_limit" type="double" value="0.05" />
+        <param name="creep_acceleration_limit" type="double" value="0.00" />
     </node>
     
     
