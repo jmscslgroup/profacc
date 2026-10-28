@@ -36,8 +36,8 @@ apps:
         - owner: jmscslgroup
           repo: cbf
           branch_or_hash: original_CBF_implementation_2021
-        - owner: katesanborn
-          repo: multimodalcbf
+        - owner: jmscslgroup
+          repo: multimodecbf
         - owner: jmscslgroup
           repo: speedlimiter
         - owner: jmscslgroup

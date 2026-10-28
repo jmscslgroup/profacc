@@ -88,7 +88,6 @@
     <node pkg="multimodalcbf" type="multimodalcbf" name="multimodalcbf" if="$(eval not readonly and hwil)">
         <!-- DO NOT change this remap; this fixes the sign change for rel_vel -->
         <!-- <remap from="rel_vel" to="rel_vel_reversed"/> -->
-    </node>
     
     
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
