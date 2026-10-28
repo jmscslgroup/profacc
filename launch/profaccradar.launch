@@ -81,15 +81,17 @@
     -->
     
     
-    <!-- root namespace: multimodalcbf is Simulink-generated. Before 2026-10-28 these
+    <!-- root namespace: multimodecbf is Simulink-generated. Before 2026-10-28 these
          were inside the node tag and never read (compiled defaults: 0.1 and 0.0). -->
     <param name="creep_velocity_limit" type="double" value="0.1" />
     <param name="creep_acceleration_limit" type="double" value="0.05" />
-    <node pkg="multimodalcbf" type="multimodalcbf" name="multimodalcbf" if="$(eval not readonly and hwil)">
+    <!-- jmscslgroup/multimodecbf (see libpanda-apps.yaml); replaces katesanborn/multimodalcbf -->
+    <node pkg="multimodecbf" type="multimodecbf" name="multimodecbf" if="$(eval not readonly and hwil)">
         <!-- DO NOT change this remap; this fixes the sign change for rel_vel -->
         <!-- <remap from="rel_vel" to="rel_vel_reversed"/> -->
-    
-    
+    </node>
+
+
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- ~~~~~~ Magic commands that make the car connect to the correct interface ~~~~~~ -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
