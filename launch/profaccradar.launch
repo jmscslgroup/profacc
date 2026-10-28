@@ -7,12 +7,15 @@
 
     <!-- your description likely should not change, but if it needs to , check it here -->
     <arg name="description" default="profaccradar"/>
-    <!-- Your package name should not change, but you may want to add params inside -->
+    <!-- if you have parameters for your node, set them here, OUTSIDE the node tag.
+         Simulink-generated nodes look parameters up from the root namespace
+         (/alpha), so a param inside <node> (which becomes /profacc/alpha) is
+         never read and the node silently uses its compiled-in default. -->
+    <param name="alpha" type="double" value="1.1" />
+    <param name="tau" type="double" value="2" />
+    <param name="lambda" type="double" value="0.1" />
+    <!-- Your package name should not change -->
     <node pkg="profacc" type="profacc" name="profacc" output="screen">
-        <!-- if you have parameters for your node, set them here  -->
-        <param name="alpha" type="double" value="1.1" />
-        <param name="tau" type="double" value="2" />
-        <param name="lambda" type="double" value="0.1" />
         <!-- DO NOT change this remap; this is a hardware-only configuration -->
         <remap from="cmd_accel" to="cmd_accel_speedlimit_pre"/>
         <!-- DO NOT change this remap; this gives an additional safety buffer -->
@@ -26,10 +29,9 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
     <!-- ~~~~~ Set a speed limit for the car from the ACC set speed in m/s~~~~~~~~~~~~~~ -->
+    <!-- buffer for the speed limit (root namespace: speedlimiter is Simulink-generated) -->
+    <param name="buffer" type="double" value="1.0" />
     <node pkg="speedlimiter" type="speedlimiter" name="speedlimiter">
-        <!-- buffer for the speed limit -->
-        <param name="buffer" type="double" value="1.0" />
-
         <!-- take the output from the controller and feed it into the speed limiter -->
         <remap from="cmd_accel_pre" to="cmd_accel_speedlimit_pre"/>
         <remap from="cmd_accel_limited" to="cmd_accel_pre"/>
@@ -79,11 +81,13 @@
     -->
     
     
+    <!-- root namespace: multimodalcbf is Simulink-generated. Before 2026-10-28 these
+         were inside the node tag and never read (compiled defaults: 0.1 and 0.0). -->
+    <param name="creep_velocity_limit" type="double" value="0.1" />
+    <param name="creep_acceleration_limit" type="double" value="0.05" />
     <node pkg="multimodalcbf" type="multimodalcbf" name="multimodalcbf" if="$(eval not readonly and hwil)">
         <!-- DO NOT change this remap; this fixes the sign change for rel_vel -->
         <!-- <remap from="rel_vel" to="rel_vel_reversed"/> -->
-        <param name="creep_velocity_limit" type="double" value="0.1" />
-        <param name="creep_acceleration_limit" type="double" value="0.05" />
     </node>
     
     
