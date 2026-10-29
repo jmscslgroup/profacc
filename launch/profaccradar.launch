@@ -62,8 +62,11 @@
     <node pkg="subtractor" type="subtractor" name="subtractor_extra_space">
         <remap from="in1" to="lead_dist_radar" />
         <remap from="in2" to="lead_dist_offset" />
-        <remap from="diff" to="lead_dist_extra" />
+        <remap from="diff" to="lead_dist_extra_raw" />
     </node>
+
+    <node pkg="topic_tools" type="transform" name="lead_dist_floor"
+           args="lead_dist_extra_raw lead_dist_extra std_msgs/Float64 'max(2.914, m.data)'" />
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- ~~  Safety and supervisory control parameters of the Control Barrier Function ~ -->
